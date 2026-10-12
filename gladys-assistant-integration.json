@@ -6,8 +6,8 @@
     "en": "Control older Pioneer AV receivers (2009-2015, IP control on port 8102 or 23).",
     "fr": "Pilotez les anciens amplis Pioneer (2009-2015, contrôle IP sur le port 8102 ou 23)."
   },
-  "version": "1.0.2",
-  "docker_image": "ghcr.io/daviddu26/gladys-pioneer-legacy:1.0.2",
+  "version": "1.0.3",
+  "docker_image": "ghcr.io/daviddu26/gladys-pioneer-legacy:1.0.3",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/daviddu26/gladys-pioneer-legacy/main/cover.jpg",
   "categories": ["multimedia"],

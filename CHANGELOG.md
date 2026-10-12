@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-10-12
+
 ### Fixed
 
 - Receivers found by the scan now show up in the Discovery tab: option labels
@@ -33,6 +35,7 @@ the notes of the version's GitHub Release.
   screen, and a "Send a Pioneer command" scene action.
 - A cover image for the Gladys catalog (`cover.jpg`, drawn from `cover.svg`).
 
-[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/daviddu26/gladys-pioneer-legacy/releases/tag/v1.0.1
