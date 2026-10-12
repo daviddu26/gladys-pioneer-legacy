@@ -208,7 +208,7 @@ function zoneFeatures(ids, zone, inputs, config, capabilities = {}) {
       keep_history: false,
       supported_options: inputs.map((input, index) => ({
         value: input.code,
-        label: { en: input.name, fr: input.name },
+        label: input.name,
         sort_order: index + 1,
       })),
     },

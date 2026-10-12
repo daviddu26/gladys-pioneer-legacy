@@ -82,7 +82,7 @@ test('a bigger model gets zone 2, its own input names and the current mode', () 
   assert.ok(main.includes(fid(MAIN, BIG, FEATURE.CURRENT_LISTENING_MODE)));
   const inputs = devices[1].features.find((f) => f.external_id === fid(ZONE2, BIG, FEATURE.INPUT));
   assert.deepEqual(
-    inputs.supported_options.map((o) => o.label.en),
+    inputs.supported_options.map((o) => o.label),
     ['BD', 'HDMI 1'],
   );
 });
@@ -169,4 +169,19 @@ test('deleting the device closes its connection', async () => {
     }),
     /No receiver connection/,
   );
+});
+
+test('option labels are plain strings, as the Gladys core requires', () => {
+  for (const receiver of [VSX528, BIG]) {
+    for (const device of buildReceiverDevices(gladys, receiver, config)) {
+      for (const feature of device.features) {
+        for (const option of feature.supported_options ?? []) {
+          assert.equal(typeof option.label, 'string', `${feature.name}: ${JSON.stringify(option)}`);
+          assert.ok(option.label.trim().length > 0);
+        }
+        const values = (feature.supported_options ?? []).map((o) => String(o.value));
+        assert.equal(new Set(values).size, values.length, `${feature.name}: duplicate values`);
+      }
+    }
+  }
 });

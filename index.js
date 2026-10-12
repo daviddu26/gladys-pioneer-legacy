@@ -25,6 +25,16 @@ let config = normalizeConfig();
 
 // --- Discovery: the user clicked "Scan" in the Discovery tab -----------------
 gladys.onScanRequest(async () => {
+  try {
+    await scan();
+  } catch (err) {
+    // The SDK only acks the failure to Gladys: log it, or it stays invisible.
+    logger.error(`Scan failed: ${err.message}`);
+    throw err;
+  }
+});
+
+async function scan() {
   logger.info('onScanRequest -> looking for receivers');
   const { receivers: found, ignored } = await discoverReceivers(gladys, config);
   for (const { host, reason } of ignored) {
@@ -36,7 +46,7 @@ gladys.onScanRequest(async () => {
   await gladys.publishDiscoveredDevices(
     found.flatMap((r) => buildReceiverDevices(gladys, r, config)),
   );
-});
+}
 
 // --- Command: the user acts on a controllable feature ------------------------
 gladys.onSetValue(async (device, feature, value) => {
@@ -75,7 +85,9 @@ gladys.onConfigUpdated(async (newConfig) => {
     ),
   );
   if (rebuilt.length > 0) {
-    await gladys.publishDiscoveredDevices(rebuilt);
+    await gladys.publishDiscoveredDevices(rebuilt).catch((err) => {
+      logger.error(`Updating the receivers failed: ${err.message}`);
+    });
   }
 });
 

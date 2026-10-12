@@ -10,6 +10,11 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Fixed
+
+- Receivers found by the scan now show up in the Discovery tab: option labels
+  are sent as plain text, as the Gladys core requires. Scan errors are logged.
+
 ## [1.0.2] - 2026-10-12
 
 ## [1.0.1] - 2026-10-12

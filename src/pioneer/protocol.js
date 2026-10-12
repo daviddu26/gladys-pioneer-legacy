@@ -97,34 +97,18 @@ export const PROBED_INPUT_CODES = Array.from({ length: 60 }, (_, i) => String(i)
 // Only group codes and AUTO SURROUND are offered, so the list works
 // everywhere; any direct code can still be sent with the "Send a command"
 // action. Values are stable keys stored by Gladys in scenes: never rename one.
+// Labels are plain strings (the Gladys core refuses multi-language option
+// labels), written like the receiver's own display so they read the same in
+// every language.
 export const LISTENING_MODES = [
-  {
-    value: 'auto_surround',
-    command: '0006SR',
-    label: { en: 'Auto surround', fr: 'Auto surround' },
-  },
-  {
-    value: 'auto_direct',
-    command: '0005SR',
-    label: { en: 'Auto surround / Direct (cycle)', fr: 'Auto surround / Direct (cycle)' },
-  },
-  {
-    value: 'stereo',
-    command: '0001SR',
-    label: { en: 'Stereo (cycle)', fr: 'Stéréo (cycle)' },
-  },
-  {
-    value: 'standard',
-    command: '0010SR',
-    label: { en: 'Standard surround (cycle)', fr: 'Surround standard (cycle)' },
-  },
+  { value: 'auto_surround', command: '0006SR', label: 'AUTO SURROUND' },
+  { value: 'auto_direct', command: '0005SR', label: 'AUTO SURR / DIRECT (cycle)' },
+  { value: 'stereo', command: '0001SR', label: 'STEREO (cycle)' },
+  { value: 'standard', command: '0010SR', label: 'STANDARD (cycle)' },
   {
     value: 'advanced',
     command: '0100SR',
-    label: {
-      en: 'Advanced surround (last used, e.g. EXT.STEREO)',
-      fr: 'Advanced surround (dernier utilisé, ex. EXT.STEREO)',
-    },
+    label: 'ADVANCED SURROUND (last used, e.g. EXT.STEREO)',
   },
 ];
 
