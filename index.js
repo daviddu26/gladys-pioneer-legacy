@@ -17,6 +17,7 @@ import { discoverReceivers } from './src/discovery.js';
 import { buildReceiverDevices, receiversFromDevices, receivers } from './src/devices/index.js';
 import { ACTIONS } from './src/actions.js';
 import { SCENE_ACTIONS } from './src/scenes.js';
+import { WIDGETS, createRefresher } from './src/widgets.js';
 
 const gladys = new GladysIntegration();
 
@@ -71,6 +72,16 @@ for (const [actionKey, handler] of Object.entries(ACTIONS)) {
 for (const [actionKey, handler] of Object.entries(SCENE_ACTIONS)) {
   gladys.onSceneAction(actionKey, (fields) => handler(gladys, { fields, config }));
 }
+
+// --- Dashboard widgets --------------------------------------------------------
+for (const [widgetKey, widget] of Object.entries(WIDGETS)) {
+  gladys.onWidgetGet(widgetKey, (request) => widget.get(gladys, { ...request, config }));
+  gladys.onWidgetAction(widgetKey, (actionKey, params, { settings }) =>
+    widget.action(gladys, { actionKey, params, settings, config }),
+  );
+}
+// The computed tiles (power, input, mode) follow the receivers' states.
+receivers.onStateChange(createRefresher(gladys));
 
 // --- Configuration updated by the user ---------------------------------------
 // The max volume and the input names shape the features: re-publish the

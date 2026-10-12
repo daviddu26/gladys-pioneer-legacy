@@ -343,6 +343,9 @@ class ReceiverConnection {
     this.zones = new Set();
     this.raw = { [MAIN]: null, [ZONE2]: null, [ZONE3]: null };
     this.capabilities = {};
+    this.inputs = [];
+    // Last value published per zone and feature, read by the dashboard widget.
+    this.values = { [MAIN]: {}, [ZONE2]: {}, [ZONE3]: {} };
     this.model = null;
     this.lastPublished = new Map();
     this.client = new PioneerClient({ host, port, logger, createConnection });
@@ -381,6 +384,8 @@ class ReceiverConnection {
       return;
     }
     this.lastPublished.set(id, comparable);
+    this.values[zone][key] = value;
+    stateListener?.(this);
     await this.gladys.publishState(id, value);
   }
 
@@ -516,6 +521,8 @@ class ReceiverConnection {
 const connections = new Map();
 // Called whenever a receiver connects or disconnects (see index.js).
 let statusListener = null;
+// Called whenever a published state changes (see the dashboard widget).
+let stateListener = null;
 
 export const receivers = {
   /**
@@ -540,17 +547,23 @@ export const receivers = {
         connection = new ReceiverConnection(gladys, want, options);
         connection.zones = want.zones;
         connection.capabilities = want.capabilities;
+        connection.inputs = want.inputs;
         connections.set(platformId, connection);
         connection.client.start();
       } else {
         connection.zones = want.zones;
         connection.capabilities = want.capabilities;
+        connection.inputs = want.inputs;
       }
     }
   },
 
   onStatusChange(listener) {
     statusListener = listener;
+  },
+
+  onStateChange(listener) {
+    stateListener = listener;
   },
 
   stopAll() {

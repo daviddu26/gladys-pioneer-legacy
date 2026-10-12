@@ -190,5 +190,31 @@
       "type": "ssdp",
       "st": "upnp:rootdevice"
     }
+  ],
+  "widgets": [
+    {
+      "key": "remote",
+      "label": {
+        "en": "Receiver remote",
+        "fr": "Télécommande ampli"
+      },
+      "description": {
+        "en": "Power, volume, input and listening mode of a receiver, with quick buttons.",
+        "fr": "Alimentation, volume, entrée et mode d'écoute d'un ampli, avec des boutons rapides."
+      },
+      "icon": "speaker",
+      "settings": [
+        {
+          "key": "receiver",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Receiver (zone)",
+            "fr": "Ampli (zone)"
+          }
+        }
+      ],
+      "action_timeout_seconds": 20
+    }
   ]
 }

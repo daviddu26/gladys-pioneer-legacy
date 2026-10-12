@@ -10,6 +10,11 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- "Receiver remote" dashboard widget: power, volume, input and listening mode
+  of a receiver zone, with power, volume and listening mode (or mute) buttons.
+
 ## [1.0.3] - 2026-10-12
 
 ### Fixed

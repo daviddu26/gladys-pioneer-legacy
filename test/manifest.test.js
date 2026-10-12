@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { ACTIONS } from '../src/actions.js';
 import { SCENE_ACTIONS } from '../src/scenes.js';
+import { WIDGETS } from '../src/widgets.js';
 import { DEFAULT_CONFIG } from '../src/config.js';
 
 const manifest = JSON.parse(
@@ -92,6 +93,16 @@ test('every scene_actions key has an onSceneAction handler, and vice versa', () 
   }
   for (const key of Object.keys(SCENE_ACTIONS)) {
     assert.ok(declared.includes(key), `handler "${key}" is not declared in scene_actions`);
+  }
+});
+
+test('every widgets key has a handler, and vice versa', () => {
+  const declared = keysOf(manifest.widgets);
+  for (const key of declared) {
+    assert.equal(typeof WIDGETS[key]?.get, 'function', `widget "${key}" has no content handler`);
+  }
+  for (const key of Object.keys(WIDGETS)) {
+    assert.ok(declared.includes(key), `widget "${key}" is not declared in widgets`);
   }
 });
 
