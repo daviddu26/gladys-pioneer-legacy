@@ -9,6 +9,7 @@
   "version": "1.0.1",
   "docker_image": "ghcr.io/daviddu26/gladys-pioneer-legacy:1.0.1",
   "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/daviddu26/gladys-pioneer-legacy/main/cover.jpg",
   "categories": ["multimedia"],
   "config_schema": [
     {

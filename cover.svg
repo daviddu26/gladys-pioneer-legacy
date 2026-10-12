@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="534" viewBox="0 0 800 534">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1b2d"/>
+      <stop offset="1" stop-color="#1c2f4a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.48" r="0.55">
+      <stop offset="0" stop-color="#2ad1c9" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#2ad1c9" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4250"/>
+      <stop offset="0.08" stop-color="#262b34"/>
+      <stop offset="1" stop-color="#14171c"/>
+    </linearGradient>
+    <radialGradient id="knob" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#7d8794"/>
+      <stop offset="0.55" stop-color="#3b424c"/>
+      <stop offset="1" stop-color="#1b1f25"/>
+    </radialGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05090c"/>
+      <stop offset="1" stop-color="#0b1418"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="534" fill="url(#bg)"/>
+  <rect width="800" height="534" fill="url(#glow)"/>
+
+  <!-- receiver -->
+  <ellipse cx="400" cy="384" rx="250" ry="8" fill="#05070a" opacity="0.45"/>
+  <g fill="#1a1e24" stroke="#0b0d11" stroke-width="1.5">
+    <rect x="168" y="352" width="46" height="26" rx="6"/>
+    <rect x="586" y="352" width="46" height="26" rx="6"/>
+  </g>
+  <g fill="#2a3039">
+    <rect x="172" y="360" width="38" height="4" rx="2"/>
+    <rect x="590" y="360" width="38" height="4" rx="2"/>
+  </g>
+  <rect x="140" y="200" width="520" height="160" rx="14" fill="url(#body)" stroke="#4a5361" stroke-width="1.5"/>
+  <line x1="152" y1="208" x2="648" y2="208" stroke="#5c6676" stroke-width="1" opacity="0.6"/>
+
+  <!-- left knob -->
+  <circle cx="215" cy="280" r="44" fill="url(#knob)" stroke="#11141a" stroke-width="2"/>
+  <circle cx="215" cy="280" r="34" fill="none" stroke="#5a636f" stroke-width="1" opacity="0.6"/>
+  <line x1="215" y1="280" x2="196" y2="254" stroke="#d6dde6" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- right volume knob -->
+  <circle cx="585" cy="280" r="50" fill="url(#knob)" stroke="#11141a" stroke-width="2"/>
+  <circle cx="585" cy="280" r="39" fill="none" stroke="#5a636f" stroke-width="1" opacity="0.6"/>
+  <line x1="585" y1="280" x2="611" y2="250" stroke="#2ad1c9" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- display -->
+  <rect x="290" y="236" width="220" height="70" rx="6" fill="url(#screen)" stroke="#2b3640" stroke-width="1.5"/>
+  <text x="400" y="268" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="24" font-weight="bold" fill="#2ad1c9" letter-spacing="1">VOL -46.0dB</text>
+  <text x="400" y="294" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="15" fill="#2ad1c9" opacity="0.7" letter-spacing="2">EXT.STEREO</text>
+
+  <!-- buttons -->
+  <g fill="#2f3540" stroke="#11141a" stroke-width="1">
+    <rect x="296" y="320" width="34" height="12" rx="3"/>
+    <rect x="338" y="320" width="34" height="12" rx="3"/>
+    <rect x="380" y="320" width="40" height="12" rx="3"/>
+    <rect x="428" y="320" width="34" height="12" rx="3"/>
+    <rect x="470" y="320" width="34" height="12" rx="3"/>
+  </g>
+  <circle cx="170" cy="340" r="4" fill="#2ad1c9"/>
+
+  <!-- network link -->
+  <g stroke="#9fb3c8" stroke-width="3" fill="none" stroke-linecap="round">
+    <line x1="400" y1="360" x2="400" y2="420" stroke-dasharray="2 9"/>
+  </g>
+  <g fill="#9fb3c8">
+    <rect x="370" y="420" width="60" height="36" rx="6" fill="none" stroke="#9fb3c8" stroke-width="3"/>
+    <rect x="384" y="430" width="6" height="10" rx="1"/>
+    <rect x="397" y="430" width="6" height="10" rx="1"/>
+    <rect x="410" y="430" width="6" height="10" rx="1"/>
+  </g>
+  <text x="400" y="488" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="17" fill="#9fb3c8" letter-spacing="3">IP CONTROL · 8102</text>
+
+  <text x="400" y="120" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="34" font-weight="bold" fill="#e8eef5" letter-spacing="1">Legacy Pioneer AV Receiver</text>
+  <text x="400" y="156" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="17" fill="#9fb3c8" letter-spacing="2">LOCAL CONTROL FOR GLADYS</text>
+</svg>

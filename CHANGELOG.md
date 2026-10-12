@@ -24,6 +24,7 @@ the notes of the version's GitHub Release.
 - Real-time feedback of the changes made with the remote or the front panel.
 - "Test the connection" and "Send a command" buttons in the Configuration
   screen, and a "Send a Pioneer command" scene action.
+- A cover image for the Gladys catalog (`cover.jpg`, drawn from `cover.svg`).
 
 [Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.1...HEAD
 [1.0.1]: https://github.com/daviddu26/gladys-pioneer-legacy/releases/tag/v1.0.1
