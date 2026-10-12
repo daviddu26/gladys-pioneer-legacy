@@ -195,12 +195,12 @@
     {
       "key": "remote",
       "label": {
-        "en": "Receiver remote",
-        "fr": "Télécommande ampli"
+        "en": "Receiver status",
+        "fr": "État de l'ampli"
       },
       "description": {
-        "en": "Power, volume, input and listening mode of a receiver, with quick buttons.",
-        "fr": "Alimentation, volume, entrée et mode d'écoute d'un ampli, avec des boutons rapides."
+        "en": "Power, volume, sound and current input of a receiver zone.",
+        "fr": "Alimentation, volume, son et source en cours d'une zone de l'ampli."
       },
       "icon": "speaker",
       "settings": [
@@ -213,8 +213,7 @@
             "fr": "Ampli (zone)"
           }
         }
-      ],
-      "action_timeout_seconds": 20
+      ]
     }
   ]
 }

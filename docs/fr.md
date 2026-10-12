@@ -63,14 +63,14 @@ Pour la zone principale, en plus :
 Les changements faits à la télécommande ou en façade apparaissent dans Gladys
 immédiatement : l'ampli les annonce de lui-même.
 
-## Widget de tableau de bord
+## Tableau de bord
 
-Dans l'éditeur de tableau de bord, ajoutez le widget **Télécommande ampli**
-(section Pioneer Legacy) et choisissez l'ampli, ou la zone. Il affiche
-l'alimentation, le volume (en direct), l'entrée et le mode d'écoute, avec
-quatre boutons : allumer / éteindre, volume −, volume +, et une bascule
-**AUTO SURROUND ↔ ADVANCED** (le dernier mode Advanced utilisé, par exemple
-EXT.STEREO). Pour une zone 2 ou 3, le quatrième bouton coupe ou remet le son.
+- **Pour piloter l'ampli**, ajoutez-le dans le widget standard **Appareils** de
+  Gladys : un interrupteur marche / veille, un curseur de volume, des listes
+  pour la source et le mode d'écoute, et les boutons sourdine et volume ± .
+- **Pour voir son état d'un coup d'œil**, ajoutez le widget **État de l'ampli**
+  (section Pioneer Legacy) et choisissez l'ampli, ou la zone : alimentation,
+  volume (en direct), son (actif ou coupé) et source en cours.
 
 ## Boutons de configuration
 

@@ -10,6 +10,12 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- The dashboard widget is now "Receiver status": power, live volume, sound and
+  current input, display only. The controls (on/off switch, volume slider,
+  input list) come from Gladys' standard "Devices" widget.
+
 ## [1.0.4] - 2026-10-12
 
 ### Added

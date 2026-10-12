@@ -60,14 +60,14 @@ For the main zone, also:
 Changes made with the remote or the front panel show up in Gladys at once: the
 receiver reports them on its own.
 
-## Dashboard widget
+## Dashboard
 
-In the dashboard editor, add the **Receiver remote** widget (Pioneer Legacy
-section) and pick the receiver, or the zone. It shows the power, the volume
-(live), the input and the listening mode, with four buttons: on / off, volume
-down, volume up, and an **AUTO SURROUND ↔ ADVANCED** toggle (the last
-Advanced mode used, e.g. EXT.STEREO). For a zone 2 or 3, the fourth button
-mutes or unmutes.
+- **To control the receiver**, add it to Gladys' standard **Devices** widget:
+  an on / standby switch, a volume slider, lists for the input and the
+  listening mode, and the mute and volume ± buttons.
+- **To see its state at a glance**, add the **Receiver status** widget
+  (Pioneer Legacy section) and pick the receiver, or the zone: power, volume
+  (live), sound (on or muted) and current input.
 
 ## Configuration buttons
 

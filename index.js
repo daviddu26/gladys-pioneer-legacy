@@ -76,9 +76,11 @@ for (const [actionKey, handler] of Object.entries(SCENE_ACTIONS)) {
 // --- Dashboard widgets --------------------------------------------------------
 for (const [widgetKey, widget] of Object.entries(WIDGETS)) {
   gladys.onWidgetGet(widgetKey, (request) => widget.get(gladys, { ...request, config }));
-  gladys.onWidgetAction(widgetKey, (actionKey, params, { settings }) =>
-    widget.action(gladys, { actionKey, params, settings, config }),
-  );
+  if (typeof widget.action === 'function') {
+    gladys.onWidgetAction(widgetKey, (actionKey, params, { settings }) =>
+      widget.action(gladys, { actionKey, params, settings, config }),
+    );
+  }
 }
 // The computed tiles (power, input, mode) follow the receivers' states.
 receivers.onStateChange(createRefresher(gladys));
