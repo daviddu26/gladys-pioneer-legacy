@@ -1,11 +1,11 @@
 // -----------------------------------------------------------------------------
 // Entry point of the Gladys external integration for legacy Pioneer receivers.
 //
-// Role of this file: wire the SDK to the device catalog (src/devices/). It holds
-// no protocol logic (src/pioneer/) and no device logic (src/devices/). It only:
+// Role of this file: wire the SDK to the discovery (src/discovery.js) and to
+// the receivers (src/devices/). It holds no protocol logic. It only:
 //   1. instantiates the SDK (connection, auth, reconnection: handled for you);
 //   2. registers the event handlers BEFORE connect();
-//   3. connects, publishes the receiver and opens the link to it.
+//   3. connects, and opens a link to every receiver the user created.
 //
 // The SDK reads GLADYS_HOST_API_URL, GLADYS_INTEGRATION_TOKEN and
 // GLADYS_INTEGRATION_SELECTOR from the environment set by Gladys.
@@ -13,8 +13,8 @@
 
 import { GladysIntegration, logger } from '@gladysassistant/integration-sdk';
 import { normalizeConfig } from './src/config.js';
-import { buildDiscoveredDevices, findBlueprintByDevice } from './src/devices/index.js';
-import { receiver } from './src/devices/receiver.js';
+import { discoverReceivers } from './src/discovery.js';
+import { buildReceiverDevices, receiversFromDevices, receivers } from './src/devices/index.js';
 import { ACTIONS } from './src/actions.js';
 import { SCENE_ACTIONS } from './src/scenes.js';
 
@@ -23,63 +23,91 @@ const gladys = new GladysIntegration();
 // Current configuration (hot-reloaded via onConfigUpdated).
 let config = normalizeConfig();
 
-const notConfigured = {
-  en: 'Enter the IP address of the receiver in the configuration.',
-  fr: "Saisissez l'adresse IP de l'ampli dans la configuration.",
-};
-
-// --- Discovery: Gladys asks for the list of devices --------------------------
+// --- Discovery: the user clicked "Scan" in the Discovery tab -----------------
 gladys.onScanRequest(async () => {
-  logger.info('onScanRequest -> publishing the receiver');
-  await gladys.publishDiscoveredDevices(buildDiscoveredDevices(gladys, config));
+  logger.info('onScanRequest -> looking for receivers');
+  const { receivers: found, ignored } = await discoverReceivers(gladys, config);
+  for (const { host, reason } of ignored) {
+    if (reason === 'eiscp') {
+      logger.info(`${host} is a recent receiver (Onkyo protocol): use the Onkyo integration`);
+    }
+  }
+  logger.info(`Found ${found.length} receiver(s)`);
+  await gladys.publishDiscoveredDevices(
+    found.flatMap((r) => buildReceiverDevices(gladys, r, config)),
+  );
 });
 
 // --- Command: the user acts on a controllable feature ------------------------
 gladys.onSetValue(async (device, feature, value) => {
   logger.info(`onSetValue <- ${feature.external_id} = ${JSON.stringify(value)}`);
-  const blueprint = findBlueprintByDevice(gladys, device);
-  if (!blueprint) {
-    // Throw: the SDK sends a success:false acknowledgement to Gladys.
-    throw new Error(`No command handler for ${device.external_id}`);
-  }
-  await blueprint.onSetValue(gladys, { device, feature, value, config });
+  await receivers.onSetValue(gladys, { device, feature, value, config });
 });
 
-// --- Manifest actions: buttons in the Configuration screen -------------------
+// --- The user created, edited or deleted a receiver --------------------------
+async function syncReceivers() {
+  const devices = await gladys.getDevices();
+  receivers.sync(gladys, devices);
+  await reportStatus();
+}
+gladys.onDeviceCreated(syncReceivers);
+gladys.onDeviceUpdated(syncReceivers);
+gladys.onDeviceDeleted(syncReceivers);
+
+// --- Manifest actions and scene actions --------------------------------------
 for (const [actionKey, handler] of Object.entries(ACTIONS)) {
   gladys.onAction(actionKey, (fields) => handler(gladys, { fields, config }));
 }
-
-// --- Scene actions -----------------------------------------------------------
 for (const [actionKey, handler] of Object.entries(SCENE_ACTIONS)) {
   gladys.onSceneAction(actionKey, (fields) => handler(gladys, { fields, config }));
 }
 
-// (Re)publish the receiver and (re)open the link to it with the current config.
-async function applyConfig() {
-  await gladys.publishDiscoveredDevices(buildDiscoveredDevices(gladys, config));
-  if (!config.host) {
-    receiver.stopPush();
-    await gladys.setConnectionStatus(false, notConfigured);
-    return;
-  }
-  receiver.startPush(gladys, config);
-}
-
 // --- Configuration updated by the user ---------------------------------------
+// The max volume and the input names shape the features: re-publish the
+// receivers already created, rebuilt from their stored params (no probing).
 gladys.onConfigUpdated(async (newConfig) => {
   logger.info('onConfigUpdated -> new configuration received');
   config = normalizeConfig(newConfig);
-  await applyConfig();
+  const devices = await gladys.getDevices();
+  const rebuilt = receiversFromDevices(gladys, devices).flatMap((r) =>
+    buildReceiverDevices(gladys, r, config).filter((d) =>
+      devices.some((existing) => existing.external_id === d.external_id),
+    ),
+  );
+  if (rebuilt.length > 0) {
+    await gladys.publishDiscoveredDevices(rebuilt);
+  }
+});
+
+// --- Application-level status, shown in the Configuration screen ------------
+async function reportStatus() {
+  const list = receivers.list();
+  const down = list.filter((c) => !c.connected).map((c) => c.key);
+  if (list.length === 0) {
+    await gladys.setConnectionStatus(false, {
+      en: 'No receiver yet: run a scan in the Discovery tab.',
+      fr: "Aucun ampli pour l'instant : lancez un scan dans l'onglet Découverte.",
+    });
+  } else if (down.length > 0) {
+    await gladys.setConnectionStatus(false, {
+      en: `Unreachable: ${down.join(', ')}. Is Network Standby on?`,
+      fr: `Injoignable : ${down.join(', ')}. Le Network Standby est-il activé ?`,
+    });
+  } else {
+    await gladys.setConnectionStatus(true);
+  }
+}
+receivers.onStatusChange(() => {
+  reportStatus().catch(() => {});
 });
 
 // --- Connection lifecycle ----------------------------------------------------
-// The link to the receiver is independent from the link to Gladys: it stays
-// open when the Gladys WebSocket drops, so no state change is missed.
+// The links to the receivers are independent from the link to Gladys: they
+// stay open when the Gladys WebSocket drops, so no state change is missed.
 gladys.on('connected', async () => {
   try {
     config = normalizeConfig(await gladys.getConfig());
-    await applyConfig();
+    await syncReceivers();
   } catch (err) {
     logger.error('Post-connection initialization failed', err);
     await gladys
@@ -94,7 +122,7 @@ gladys.on('connected', async () => {
 // --- Graceful shutdown -------------------------------------------------------
 gladys.handleShutdown((signal) => {
   logger.info(`Received ${signal} -> graceful shutdown`);
-  receiver.stopPush();
+  receivers.stopAll();
 });
 
 // --- Startup -----------------------------------------------------------------

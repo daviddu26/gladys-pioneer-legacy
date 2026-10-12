@@ -8,8 +8,7 @@
 
 // Defaults: they MUST match the `default` values of the manifest config_schema.
 export const DEFAULT_CONFIG = {
-  host: '',
-  port: 8102,
+  hosts: '',
   max_volume_db: 0,
   input_names: '',
 };
@@ -30,8 +29,7 @@ export function normalizeConfig(raw = {}) {
   return {
     ...DEFAULT_CONFIG,
     ...raw,
-    host: String(raw.host ?? '').trim(),
-    port: numberOr(raw.port, DEFAULT_CONFIG.port, 1, 65535),
+    hosts: String(raw.hosts ?? ''),
     max_volume_db: numberOr(raw.max_volume_db, DEFAULT_CONFIG.max_volume_db, -80, 12),
     input_names: String(raw.input_names ?? ''),
   };

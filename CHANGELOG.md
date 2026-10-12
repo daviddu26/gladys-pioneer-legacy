@@ -12,9 +12,13 @@ the notes of the version's GitHub Release.
 
 ### Added
 
-- Control of legacy Pioneer AV receivers over IP (port 8102): power, volume in
-  dB with a configurable maximum, volume up/down, mute, input selection with
-  renameable inputs, listening mode (Auto surround / Advanced).
+- Control of legacy Pioneer AV receivers over IP (port 8102 or 23): power,
+  volume in dB with a configurable maximum, volume up/down, mute, input
+  selection with renameable inputs, listening mode groups.
+- Automatic discovery of the receivers (SSDP/UPnP), plus receiver addresses
+  typed by the user, and a "Check an IP address" button.
+- Several receivers, each probed for its port, model, zone 2 / zone 3, input
+  names and listening mode report; only what it supports is exposed.
 - Real-time feedback of the changes made with the remote or the front panel.
 - "Test the connection" and "Send a command" buttons in the Configuration
   screen, and a "Send a Pioneer command" scene action.

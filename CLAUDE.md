@@ -34,14 +34,17 @@ pushing.
 index.js                          SDK wiring only: handlers registered before connect()
 src/pioneer/protocol.js           legacy Pioneer protocol: parsing, codes, conversions (pure)
 src/pioneer/client.js             persistent TCP client (reconnection, silence watchdog)
+src/pioneer/upnp.js               SSDP / UPnP description helpers
+src/pioneer/probe.js              port, model and capability detection of one receiver
+src/discovery.js                  finds the receivers (core SSDP scan + typed addresses)
 src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/receiver.js           the receiver device (features, commands, pushed state)
+src/devices/receiver.js           the receivers: one device per zone, one connection per receiver
 src/actions.js                    manifest `actions` (Configuration screen buttons)
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
 docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test; fakeGladys.js and fakeSocket.js stand in for the SDK and the receiver
+test/                             node --test; helpers/ fake the SDK, the socket and simulated receivers
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -75,7 +78,8 @@ test/                             node --test; fakeGladys.js and fakeSocket.js s
   manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
 - **Protocol facts.** The receiver never reports errors (silence instead) and
   reads only the start of a command: always match an answer on its expected
-  prefix. Facts measured on real hardware are listed at the top of
-  `src/pioneer/protocol.js`; add new ones there.
+  prefix. Codes come from Pioneer's official IP & RS-232 sheets; facts
+  measured on real hardware are listed at the top of `src/pioneer/protocol.js`
+  (add new ones there). Never assume a capability from a model name: probe it.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.

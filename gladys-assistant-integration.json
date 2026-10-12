@@ -3,8 +3,8 @@
   "type": "device",
   "name": "Pioneer Legacy",
   "description": {
-    "en": "Control older Pioneer AV receivers (IP control on port 8102, e.g. VSX-528).",
-    "fr": "Pilotez les anciens amplis Pioneer (contrôle IP sur le port 8102, ex. VSX-528)."
+    "en": "Control older Pioneer AV receivers (2009-2015, IP control on port 8102 or 23).",
+    "fr": "Pilotez les anciens amplis Pioneer (2009-2015, contrôle IP sur le port 8102 ou 23)."
   },
   "version": "1.0.0",
   "docker_image": "ghcr.io/daviddu26/gladys-pioneer-legacy:1.0.0",
@@ -14,35 +14,42 @@
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Before you start", "fr": "Avant de commencer" },
+      "label": {
+        "en": "Before you start",
+        "fr": "Avant de commencer"
+      },
       "description": {
-        "en": "For Pioneer receivers from about 2010 to 2015 (VSX-528, VSX-529, VSX-921, VSX-1021...). Turn on Network Standby on the receiver, and give it a fixed IP address in your router.",
-        "fr": "Pour les amplis Pioneer d'environ 2010 à 2015 (VSX-528, VSX-529, VSX-921, VSX-1021...). Activez le Network Standby sur l'ampli et donnez-lui une IP fixe dans votre box ou routeur."
+        "en": "For Pioneer receivers from about 2009 to 2015 (VSX-5xx to VSX-11xx, SC, SC-LX...). Turn on Network Standby on the receiver, then click Scan in the Discovery tab: the receivers on your network are found automatically. Recent Pioneers (2016+) use the Onkyo integration instead.",
+        "fr": "Pour les amplis Pioneer d'environ 2009 à 2015 (VSX-5xx à VSX-11xx, SC, SC-LX...). Activez le Network Standby sur l'ampli, puis cliquez sur Scanner dans l'onglet Découverte : les amplis de votre réseau sont trouvés automatiquement. Les Pioneer récents (2016+) relèvent de l'intégration Onkyo."
       }
     },
     {
-      "key": "host",
+      "key": "hosts",
       "type": "string",
-      "label": { "en": "Receiver IP address", "fr": "Adresse IP de l'ampli" },
-      "placeholder": { "en": "192.168.1.30", "fr": "192.168.1.30" },
-      "required": true
-    },
-    {
-      "key": "port",
-      "type": "number",
-      "label": { "en": "Port", "fr": "Port" },
-      "required": false,
-      "default": 8102,
-      "min": 1,
-      "max": 65535
+      "label": {
+        "en": "Receiver addresses (optional)",
+        "fr": "Adresses des amplis (facultatif)"
+      },
+      "description": {
+        "en": "Only for a receiver the scan does not find (other network, UPnP off): its IP address, several separated by commas.",
+        "fr": "Seulement pour un ampli que le scan ne trouve pas (autre réseau, UPnP désactivé) : son adresse IP, plusieurs séparées par des virgules."
+      },
+      "placeholder": {
+        "en": "192.168.1.30, 192.168.1.31",
+        "fr": "192.168.1.30, 192.168.1.31"
+      },
+      "required": false
     },
     {
       "key": "max_volume_db",
       "type": "number",
-      "label": { "en": "Maximum volume (dB)", "fr": "Volume maximum (dB)" },
+      "label": {
+        "en": "Maximum volume (dB)",
+        "fr": "Volume maximum (dB)"
+      },
       "description": {
-        "en": "Gladys never raises the volume above this value (-80 to +12 dB).",
-        "fr": "Gladys ne monte jamais le volume au-dessus de cette valeur (-80 à +12 dB)."
+        "en": "Gladys never raises the volume above this value, on every receiver and zone (-80 to +12 dB).",
+        "fr": "Gladys ne monte jamais le volume au-dessus de cette valeur, sur tous les amplis et zones (-80 à +12 dB)."
       },
       "required": false,
       "default": 0,
@@ -52,31 +59,81 @@
     {
       "key": "input_names",
       "type": "string",
-      "label": { "en": "Input names (optional)", "fr": "Noms des entrées (facultatif)" },
-      "description": {
-        "en": "Rename inputs as code=name pairs separated by commas. The receiver cannot report its input names.",
-        "fr": "Renommez les entrées avec des paires code=nom séparées par des virgules. L'ampli ne sait pas donner leurs noms."
+      "label": {
+        "en": "Input names (optional)",
+        "fr": "Noms des entrées (facultatif)"
       },
-      "placeholder": { "en": "25=Apple TV, 05=TV", "fr": "25=Apple TV, 05=TV" },
+      "description": {
+        "en": "Rename inputs as code=name pairs separated by commas. Most models cannot report their input names.",
+        "fr": "Renommez les entrées avec des paires code=nom séparées par des virgules. La plupart des modèles ne savent pas donner leurs noms."
+      },
+      "placeholder": {
+        "en": "25=Apple TV, 05=TV",
+        "fr": "25=Apple TV, 05=TV"
+      },
       "required": false
     }
   ],
   "actions": [
     {
+      "key": "check_address",
+      "label": {
+        "en": "Check an IP address",
+        "fr": "Vérifier une adresse IP"
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "host",
+          "type": "string",
+          "label": {
+            "en": "IP address",
+            "fr": "Adresse IP"
+          },
+          "placeholder": {
+            "en": "192.168.1.30",
+            "fr": "192.168.1.30"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
       "key": "test_connection",
-      "label": { "en": "Test the connection", "fr": "Tester la connexion" },
+      "label": {
+        "en": "Test the connections",
+        "fr": "Tester les connexions"
+      },
       "timeout_seconds": 10
     },
     {
       "key": "send_command",
-      "label": { "en": "Send a command", "fr": "Envoyer une commande" },
+      "label": {
+        "en": "Send a command",
+        "fr": "Envoyer une commande"
+      },
       "timeout_seconds": 10,
       "fields": [
         {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Receiver",
+            "fr": "Ampli"
+          }
+        },
+        {
           "key": "command",
           "type": "string",
-          "label": { "en": "Pioneer command", "fr": "Commande Pioneer" },
-          "placeholder": { "en": "?P", "fr": "?P" },
+          "label": {
+            "en": "Pioneer command",
+            "fr": "Commande Pioneer"
+          },
+          "placeholder": {
+            "en": "?P",
+            "fr": "?P"
+          },
           "required": true
         }
       ]
@@ -85,7 +142,10 @@
   "scene_actions": [
     {
       "key": "send_command",
-      "label": { "en": "Send a Pioneer command", "fr": "Envoyer une commande Pioneer" },
+      "label": {
+        "en": "Send a Pioneer command",
+        "fr": "Envoyer une commande Pioneer"
+      },
       "description": {
         "en": "Send any command of the legacy Pioneer protocol, e.g. 0100SR.",
         "fr": "Envoie n'importe quelle commande du protocole Pioneer, ex. 0100SR."
@@ -93,9 +153,22 @@
       "timeout_seconds": 10,
       "fields": [
         {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Receiver",
+            "fr": "Ampli"
+          },
+          "required": true
+        },
+        {
           "key": "command",
           "type": "string",
-          "label": { "en": "Command", "fr": "Commande" },
+          "label": {
+            "en": "Command",
+            "fr": "Commande"
+          },
           "required": true
         }
       ],
@@ -103,9 +176,18 @@
         {
           "key": "response",
           "type": "string",
-          "label": { "en": "Receiver answer", "fr": "Réponse de l'ampli" }
+          "label": {
+            "en": "Receiver answer",
+            "fr": "Réponse de l'ampli"
+          }
         }
       ]
+    }
+  ],
+  "network_discovery": [
+    {
+      "type": "ssdp",
+      "st": "upnp:rootdevice"
     }
   ]
 }
