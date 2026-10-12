@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-10-12
+
 ### Added
 
 - "Receiver remote" dashboard widget: power, volume, input and listening mode
@@ -40,7 +42,8 @@ the notes of the version's GitHub Release.
   screen, and a "Send a Pioneer command" scene action.
 - A cover image for the Gladys catalog (`cover.jpg`, drawn from `cover.svg`).
 
-[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/daviddu26/gladys-pioneer-legacy/releases/tag/v1.0.1

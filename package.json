@@ -1,6 +1,6 @@
 {
   "name": "gladys-pioneer-legacy",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Gladys Assistant integration for legacy Pioneer AV receivers (IP control on port 8102).",
   "type": "module",
