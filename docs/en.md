@@ -1,59 +1,81 @@
-# Demo Devices Template
+# Pioneer Legacy
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+This integration drives **older Pioneer AV receivers** from Gladys (about
+2010 to 2015: VSX-528, VSX-529, VSX-921, VSX-1021, VSX-824...), which use the
+legacy Pioneer IP control protocol on **port 8102**. These models do not speak
+the Onkyo protocol (eISCP, port 60128) of recent Pioneers, so the Onkyo
+integration cannot see them.
 
-## What you get
+Everything stays **local**: Gladys talks to the receiver directly on your
+network, no account, no cloud.
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+## Before you start
+
+1. Connect the receiver to the network (Ethernet cable).
+2. Turn on **Network Standby** in the receiver's menu. Without it, the
+   receiver drops the network in standby and Gladys cannot switch it on.
+3. Give it a **fixed IP** (DHCP reservation in your router).
+4. Check that the machine running Gladys can reach the receiver on port 8102
+   (mind firewall rules between VLANs).
 
 ## Configuration
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+- **Receiver IP address**: required.
+- **Port**: 8102 by default (a few models use 23).
+- **Maximum volume (dB)**: Gladys never raises the volume above it, whatever a
+  slider, a button or a scene asks. 0 dB by default.
+- **Input names**: the receiver cannot report its input names over the
+  network. Rename them as `code=name` pairs, e.g. `25=Apple TV, 05=TV`.
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+Save, then add the receiver from the **Discovery** tab.
 
-## Actions
+## What you get
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+- **Power** (on / standby)
+- **Volume** in dB, **Volume up** and **Volume down** (1 dB steps), **Mute**
+- **Input**: the list of inputs (Pioneer codes, renameable)
+- **Listening mode**: _Auto surround_, or _Advanced_, which recalls the last
+  mode used in the Advanced group (e.g. EXT.STEREO). The receiver cannot
+  report its listening mode: Gladys shows the last mode it asked for.
+
+Changes made with the remote or the front panel show up in Gladys at once: the
+receiver reports them on its own.
+
+## Configuration buttons
+
+- **Test the connection**: model, power, volume and current input.
+- **Send a command**: any command of the Pioneer protocol, with the receiver's
+  answer. Examples: `?P` (power), `?V` (volume), `25FN` (input 25), `0100SR`
+  (Advanced group).
 
 ## Scenes
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+The **Send a Pioneer command** action sends a raw command. The receiver's
+answer is available to the next actions. Example: sending `0100SR` several
+times less than 2 seconds apart cycles through the Advanced modes, like the
+remote.
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+## Commands confirmed on a VSX-528
 
-## Dashboard
+| Function         | Command   | Answer          |
+| ---------------- | --------- | --------------- |
+| Power on / off   | `PO`/`PF` | `PWR0` / `PWR2` |
+| Volume up / down | `VU`/`VD` | `VOLxxx`        |
+| Mute on / off    | `MO`/`MF` | `MUT0` / `MUT1` |
+| Select an input  | `xxFN`    | `FNxx`          |
+| Auto surround    | `0006SR`  | (none)          |
+| Advanced group   | `0100SR`  | (none)          |
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+An unknown command gets no error, just silence.
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+| Problem                           | Hint                                                                  |
+| --------------------------------- | --------------------------------------------------------------------- |
+| "Receiver unreachable"            | Network Standby on? Right IP? Port 8102 reachable?                    |
+| Unreachable as soon as in standby | Turn on Network Standby.                                              |
+| The volume stops going up         | It reached the **Maximum volume** of the configuration.               |
+| "Wrong" Advanced mode             | `0100SR` recalls the last Advanced mode: set it once with the remote. |
+
+For more detail, set `LOG_LEVEL=debug`: the logs show every line exchanged
+with the receiver.

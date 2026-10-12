@@ -1,65 +1,82 @@
-# Template de démonstration
+# Pioneer Legacy
 
-Ceci est la documentation utilisateur de l'intégration. Gladys ré-héberge ce
-fichier et affiche un lien **Documentation** permanent vers lui dans l'écran
-de configuration (dans la langue de l'utilisateur, avec l'anglais en repli) —
-c'est au moment de configurer que l'utilisateur en a le plus besoin. Gardez
-les courtes indications d'accueil dans les blocs `section` du `config_schema`
-du manifest ; mettez ici le pas-à-pas détaillé (captures d'écran, dépannage…).
+Cette intégration pilote depuis Gladys les **anciens amplis Pioneer**
+(environ 2010 à 2015 : VSX-528, VSX-529, VSX-921, VSX-1021, VSX-824…), qui
+utilisent le protocole de contrôle IP historique de Pioneer sur le **port
+8102**. Ces modèles ne parlent pas le protocole Onkyo (eISCP, port 60128) des
+Pioneer récents : l'intégration Onkyo ne les voit donc pas.
 
-## Ce que vous obtenez
+Tout reste **local** : Gladys parle directement à l'ampli sur votre réseau,
+sans compte ni cloud.
 
-Six appareils de démonstration apparaissent après l'installation : une
-station météo (vraies données Open-Meteo), un interrupteur, une lampe
-variable, une prise connectée avec mesure de puissance, un détecteur de
-mouvement et une caméra.
+## Avant de commencer
+
+1. Branchez l'ampli au réseau (câble Ethernet).
+2. Activez **Network Standby** dans le menu de l'ampli. Sans lui, l'ampli
+   coupe le réseau en veille : Gladys ne peut plus l'allumer.
+3. Donnez-lui une **IP fixe** (réservation DHCP dans votre box ou routeur).
+4. Vérifiez que la machine qui fait tourner Gladys peut joindre l'ampli sur le
+   port 8102 (attention aux règles de pare-feu entre VLAN).
 
 ## Configuration
 
-1. Ouvrez l'onglet **Configuration** de l'intégration.
-2. Renseignez la **latitude** et la **longitude** que la station météo de
-   démonstration doit observer (Paris par défaut), et choisissez votre unité
-   de température.
-3. Enregistrez : les appareils apparaissent dans l'onglet **Découverte**,
-   prêts à être ajoutés.
+- **Adresse IP de l'ampli** : obligatoire.
+- **Port** : 8102 par défaut (quelques modèles utilisent 23).
+- **Volume maximum (dB)** : Gladys ne monte jamais le volume au-dessus, quel
+  que soit le curseur, le bouton ou la scène. 0 dB par défaut.
+- **Noms des entrées** : l'ampli ne sait pas donner les noms de ses entrées
+  par le réseau. Renommez-les avec des paires `code=nom`, par exemple
+  `25=Apple TV, 05=TV`.
 
-Le réglage **Préférer la connexion locale** pilote la prise de
-démonstration : elle affiche en badge le canal réellement utilisé (local ou
-cloud), avec un point orange quand elle fonctionne en mode dégradé (local
-refusé, bascule cloud).
+Enregistrez, puis ajoutez l'ampli depuis l'onglet **Découverte**.
 
-## Actions
+## Ce que vous obtenez
 
-- **Tester le fournisseur météo** — effectue une requête en direct vers
-  Open-Meteo et affiche la température et l'humidité actuelles sous le
-  bouton.
-- **Identifier un appareil** — choisissez un de vos appareils dans la liste
-  et il se signale (la lampe de démonstration « clignote » dans les logs).
+- **Alimentation** (marche / veille)
+- **Volume** en dB, **Volume +** et **Volume −** (pas de 1 dB), **Sourdine**
+- **Entrée** : la liste des entrées (codes Pioneer, renommables)
+- **Mode d'écoute** : _Auto surround_, ou _Advanced_, qui rappelle le dernier
+  mode utilisé du groupe Advanced (par exemple EXT.STEREO). L'ampli ne sait
+  pas indiquer son mode d'écoute : Gladys affiche le dernier mode demandé.
+
+Les changements faits à la télécommande ou en façade apparaissent dans Gladys
+immédiatement : l'ampli les annonce de lui-même.
+
+## Boutons de configuration
+
+- **Tester la connexion** : modèle, alimentation, volume et entrée actuels.
+- **Envoyer une commande** : n'importe quelle commande du protocole Pioneer,
+  avec la réponse de l'ampli. Exemples : `?P` (alimentation), `?V` (volume),
+  `25FN` (entrée 25), `0100SR` (groupe Advanced).
 
 ## Scènes
 
-L'intégration ajoute ses propres cartes à l'éditeur de scènes (Gladys 5.1
-ou plus récent), dans la catégorie **Intégrations** :
+L'action **Envoyer une commande Pioneer** envoie une commande brute. La
+réponse de l'ampli est disponible pour les actions suivantes. Exemple :
+envoyer `0100SR` plusieurs fois à moins de 2 secondes d'intervalle fait
+défiler les modes Advanced, comme la télécommande.
 
-- **Mouvement détecté** (déclencheur) — lance la scène quand un détecteur
-  de démonstration voit bouger quelque chose. Choisissez éventuellement le
-  détecteur et ce qui a bougé (personne, animal) ; laissés vides, toute
-  détection correspond. Les actions suivantes peuvent lire ce qui a bougé
-  avec `{{triggerEvent.data.target}}`.
-- **Identifier un appareil** (action) — fait se signaler l'appareil choisi.
-  Elle indique si l'appareil a pu se signaler, pour que les actions
-  suivantes puissent en dépendre.
+## Commandes validées sur un VSX-528
 
-## Tableau de bord
+| Fonction           | Commande  | Réponse         |
+| ------------------ | --------- | --------------- |
+| Allumer / veille   | `PO`/`PF` | `PWR0` / `PWR2` |
+| Volume + / −       | `VU`/`VD` | `VOLxxx`        |
+| Sourdine on / off  | `MO`/`MF` | `MUT0` / `MUT1` |
+| Choisir une entrée | `xxFN`    | `FNxx`          |
+| Auto surround      | `0006SR`  | (aucune)        |
+| Groupe Advanced    | `0100SR`  | (aucune)        |
 
-Ajoutez le widget **État de la démo** à un tableau de bord : il affiche en
-direct la température de la station météo et la puissance de la prise du
-bureau, la connexion utilisée par la prise (en orange si dégradée) et la
-position observée. Son bouton **Identifier la lampe** fait se signaler la
-lampe de démonstration.
+Une commande inconnue ne renvoie aucune erreur, juste un silence.
 
 ## Dépannage
 
-L'intégration journalise tout ce qu'elle fait : consultez les logs de
-l'intégration depuis l'interface Gladys (ou `docker logs` sur l'hôte) avec
-`LOG_LEVEL=debug` pour le détail complet.
+| Problème                            | Piste                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| « Ampli injoignable »               | Network Standby activé ? IP correcte ? Port 8102 ouvert ?                          |
+| Injoignable dès qu'il est en veille | Activez Network Standby.                                                           |
+| Le volume ne monte plus             | Il a atteint le **Volume maximum** de la configuration.                            |
+| Mode Advanced « faux »              | `0100SR` rappelle le dernier mode Advanced : réglez-le une fois à la télécommande. |
+
+Pour plus de détail, passez `LOG_LEVEL=debug` : les logs montrent chaque ligne
+échangée avec l'ampli.

@@ -5,6 +5,7 @@
 //   - externalIds(type, platformId) -> { device, feature(key) }
 //   - publishState / publishStates   -> record calls so tests can assert them
 //   - publishCameraImage             -> record calls so tests can assert them
+//   - publishDiscoveredDevices       -> record calls so tests can assert them
 //   - publishTransports              -> record calls so tests can assert them
 //   - setConnectionStatus            -> record calls so tests can assert them
 //   - publishSceneEvent              -> record calls so tests can assert them
@@ -15,6 +16,7 @@
 
 export function createFakeGladys() {
   const published = [];
+  const discovered = [];
   const cameraImages = [];
   const transports = [];
   const connectionStatuses = [];
@@ -23,6 +25,7 @@ export function createFakeGladys() {
 
   return {
     published,
+    discovered,
     cameraImages,
     transports,
     connectionStatuses,
@@ -49,6 +52,10 @@ export function createFakeGladys() {
 
     async publishCameraImage(deviceExternalId, image) {
       cameraImages.push({ deviceExternalId, image });
+    },
+
+    async publishDiscoveredDevices(devices) {
+      discovered.push(...devices);
     },
 
     async publishTransports(entries) {

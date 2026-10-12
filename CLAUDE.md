@@ -16,8 +16,8 @@ its only runtime dependency. It started from the official JavaScript template.
 ```bash
 npm install
 npm test                                  # node --test, the built-in runner
-node --test test/devices.test.js          # one file
-node --test --test-name-pattern "plug"    # tests whose name matches
+node --test test/receiver.test.js         # one file
+node --test --test-name-pattern "volume"  # tests whose name matches
 npm run lint                              # ESLint
 npm run format:check                      # Prettier, as the CI runs it
 npm run format                            # Prettier, fix in place
@@ -32,15 +32,16 @@ pushing.
 
 ```
 index.js                          SDK wiring only: handlers registered before connect()
+src/pioneer/protocol.js           legacy Pioneer protocol: parsing, codes, conversions (pure)
+src/pioneer/client.js             persistent TCP client (reconnection, silence watchdog)
 src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+src/devices/receiver.js           the receiver device (features, commands, pushed state)
+src/actions.js                    manifest `actions` (Configuration screen buttons)
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
 docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test; test/helpers/fakeGladys.js stands in for the SDK
+test/                             node --test; fakeGladys.js and fakeSocket.js stand in for the SDK and the receiver
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -72,5 +73,9 @@ test/                             node --test; test/helpers/fakeGladys.js stands
   together.
 - **User-facing text** is bilingual (English and French): action messages,
   manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **Protocol facts.** The receiver never reports errors (silence instead) and
+  reads only the start of a command: always match an answer on its expected
+  prefix. Facts measured on real hardware are listed at the top of
+  `src/pioneer/protocol.js`; add new ones there.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.

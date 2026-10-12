@@ -1,177 +1,111 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Pioneer Legacy",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Control older Pioneer AV receivers (IP control on port 8102, e.g. VSX-528).",
+    "fr": "Pilotez les anciens amplis Pioneer (contrôle IP sur le port 8102, ex. VSX-528)."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/daviddu26/gladys-pioneer-legacy:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "categories": ["multimedia"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": { "en": "Before you start", "fr": "Avant de commencer" },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
-      },
-      "links": [
-        {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
-        }
-      ]
+        "en": "For Pioneer receivers from about 2010 to 2015 (VSX-528, VSX-529, VSX-921, VSX-1021...). Turn on Network Standby on the receiver, and give it a fixed IP address in your router.",
+        "fr": "Pour les amplis Pioneer d'environ 2010 à 2015 (VSX-528, VSX-529, VSX-921, VSX-1021...). Activez le Network Standby sur l'ampli et donnez-lui une IP fixe dans votre box ou routeur."
+      }
     },
     {
-      "key": "latitude",
+      "key": "host",
+      "type": "string",
+      "label": { "en": "Receiver IP address", "fr": "Adresse IP de l'ampli" },
+      "placeholder": { "en": "192.168.1.30", "fr": "192.168.1.30" },
+      "required": true
+    },
+    {
+      "key": "port",
       "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
-    },
-    {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "label": { "en": "Port", "fr": "Port" },
       "required": false,
-      "default": "celsius",
-      "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
-      ]
+      "default": 8102,
+      "min": 1,
+      "max": 65535
     },
     {
-      "key": "poll_frequency",
+      "key": "max_volume_db",
       "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "label": { "en": "Maximum volume (dB)", "fr": "Volume maximum (dB)" },
       "description": {
-        "en": "How often sensors are polled, in seconds.",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes."
+        "en": "Gladys never raises the volume above this value (-80 to +12 dB).",
+        "fr": "Gladys ne monte jamais le volume au-dessus de cette valeur (-80 à +12 dB)."
       },
       "required": false,
-      "default": 300,
-      "min": 30,
-      "max": 3600
+      "default": 0,
+      "min": -80,
+      "max": 12
+    },
+    {
+      "key": "input_names",
+      "type": "string",
+      "label": { "en": "Input names (optional)", "fr": "Noms des entrées (facultatif)" },
+      "description": {
+        "en": "Rename inputs as code=name pairs separated by commas. The receiver cannot report its input names.",
+        "fr": "Renommez les entrées avec des paires code=nom séparées par des virgules. L'ampli ne sait pas donner leurs noms."
+      },
+      "placeholder": { "en": "25=Apple TV, 05=TV", "fr": "25=Apple TV, 05=TV" },
+      "required": false
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
+      "key": "test_connection",
+      "label": { "en": "Test the connection", "fr": "Tester la connexion" },
+      "timeout_seconds": 10
     },
     {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
+      "key": "send_command",
+      "label": { "en": "Send a command", "fr": "Envoyer une commande" },
+      "timeout_seconds": 10,
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
-    }
-  ],
-  "scene_triggers": [
-    {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
-      "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
-      },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
-        }
-      ],
-      "variables": [
-        {
-          "key": "target",
+          "key": "command",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": { "en": "Pioneer command", "fr": "Commande Pioneer" },
+          "placeholder": { "en": "?P", "fr": "?P" },
+          "required": true
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
+      "key": "send_command",
+      "label": { "en": "Send a Pioneer command", "fr": "Envoyer une commande Pioneer" },
       "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+        "en": "Send any command of the legacy Pioneer protocol, e.g. 0100SR.",
+        "fr": "Envoie n'importe quelle commande du protocole Pioneer, ex. 0100SR."
       },
-      "timeout_seconds": 15,
+      "timeout_seconds": 10,
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "key": "command",
+          "type": "string",
+          "label": { "en": "Command", "fr": "Commande" },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "response",
+          "type": "string",
+          "label": { "en": "Receiver answer", "fr": "Réponse de l'ampli" }
         }
       ]
-    }
-  ],
-  "widgets": [
-    {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
-      },
-      "icon": "activity",
-      "action_timeout_seconds": 15
     }
   ]
 }
