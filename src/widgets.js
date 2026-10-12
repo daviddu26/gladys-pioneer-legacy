@@ -23,8 +23,8 @@ const REFRESH_INTERVAL_MS = 10_500;
 // Tile values are plain strings of 12 characters at most: they are localized
 // here from the language Gladys sends with each request.
 const TEXTS = {
-  en: { on: 'ON', standby: 'STANDBY', muted: 'MUTED', sound: 'ON' },
-  fr: { on: 'ALLUMÉ', standby: 'VEILLE', muted: 'COUPÉ', sound: 'ACTIF' },
+  en: { on: 'On', standby: 'Standby', muted: 'Muted', sound: 'On' },
+  fr: { on: 'Allumé', standby: 'Veille', muted: 'Coupé', sound: 'Actif' },
 };
 
 const short = (text) => (text.length > 12 ? `${text.slice(0, 11)}…` : text);

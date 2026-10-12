@@ -48,13 +48,13 @@ test('the widget shows power, live volume, sound and input, in French too', asyn
   const volumeId = gladys.externalIds('receiver', RECEIVER.platformId).feature(FEATURE.VOLUME);
   let content = buildRemoteContent(gladys, target, config, 'fr');
   assert.deepEqual(validateWidgetContent(content), []);
-  assert.deepEqual(tiles(content), ['ALLUMÉ', volumeId, 'ACTIF', 'Apple TV']);
+  assert.deepEqual(tiles(content), ['Allumé', volumeId, 'Actif', 'Apple TV']);
   assert.equal(content.components.filter((c) => c.type === 'button').length, 0);
   fake.push('MUT0');
   fake.push('PWR2');
   await new Promise((r) => setImmediate(r));
   content = buildRemoteContent(gladys, target, config, 'en');
-  assert.deepEqual(tiles(content), ['STANDBY', volumeId, 'MUTED', 'Apple TV']);
+  assert.deepEqual(tiles(content), ['Standby', volumeId, 'Muted', 'Apple TV']);
 });
 
 test('a zone 2 widget follows the zone 2 features', async () => {

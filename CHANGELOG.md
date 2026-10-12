@@ -10,6 +10,10 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- The widget values are written in lowercase (Allumé, Veille, Coupé, Actif).
+
 ## [1.0.6] - 2026-10-12
 
 ### Changed
