@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-10-12
+
 ### Changed
 
 - The volume is shown and set as 0-100 % of the receiver's scale instead of
@@ -56,7 +58,8 @@ the notes of the version's GitHub Release.
   screen, and a "Send a Pioneer command" scene action.
 - A cover image for the Gladys catalog (`cover.jpg`, drawn from `cover.svg`).
 
-[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.6...HEAD
+[1.0.6]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/daviddu26/gladys-pioneer-legacy/compare/v1.0.2...v1.0.3
