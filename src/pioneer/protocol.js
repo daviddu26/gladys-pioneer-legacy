@@ -56,6 +56,21 @@ export function dbToRaw(db) {
   return Math.min(VOLUME_RAW_MAX, Math.max(1, raw));
 }
 
+/**
+ * Raw volume -> percent of the zone's scale (0-185 main, 0-81 zones 2/3).
+ * Gladys shows the volume as 0-100 %: easier to read than decibels, and
+ * the same for every zone and every model.
+ */
+export function rawToPercent(raw, rawMax) {
+  return Math.round((Math.min(Math.max(raw, 0), rawMax) / rawMax) * 100);
+}
+
+/** Percent -> raw volume of the zone's scale, clamped to the valid range. */
+export function percentToRaw(percent, rawMax) {
+  const clamped = Math.min(Math.max(Number(percent) || 0, 0), 100);
+  return Math.round((clamped / 100) * rawMax);
+}
+
 /** Zone 2/3 raw volume (0-81) -> decibels. */
 export function zone2RawToDb(raw) {
   return raw <= 0 ? VOLUME_DB_MIN : raw - ZONE2_RAW_MAX;

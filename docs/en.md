@@ -35,8 +35,8 @@ changes: it is recognized by its UPnP id when it has one.
 ## Configuration
 
 - **Receiver addresses**: only for receivers the scan does not find.
-- **Maximum volume (dB)**: Gladys never raises the volume above it, whatever a
-  slider, a button or a scene asks. 0 dB by default.
+- **Maximum volume (%)**: Gladys never raises the volume above it, whatever a
+  slider, a button or a scene asks. 80 % by default.
 - **Input names**: most models cannot report their input names. Rename them
   as `code=name` pairs, e.g. `25=Apple TV, 05=TV`. Models that can report
   their names show them on their own.
@@ -46,7 +46,7 @@ changes: it is recognized by its UPnP id when it has one.
 For every zone:
 
 - **Power** (on / standby)
-- **Volume** in dB, **Volume up** and **Volume down** (1 dB steps), **Mute**
+- **Volume** from 0 to 100 % (100 % = the receiver's maximum, 87 % = 0 dB), **Volume up** and **Volume down**, **Mute**
 - **Input**: the list of inputs
 
 For the main zone, also:

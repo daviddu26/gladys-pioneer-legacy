@@ -9,6 +9,8 @@ import {
   rawToDb,
   splitLines,
   zone2DbToRaw,
+  percentToRaw,
+  rawToPercent,
   zone2RawToDb,
   listeningModeName,
   decodeInputs,
@@ -98,4 +100,15 @@ test('zone 2/3 and listening mode lines, from the official sheets', () => {
   assert.equal(zone2RawToDb(61), -20);
   assert.equal(zone2DbToRaw(-20), 61);
   assert.equal(zone2DbToRaw(10), 81);
+});
+
+test('volume percent covers the whole scale of each zone', () => {
+  assert.equal(rawToPercent(0, 185), 0);
+  assert.equal(rawToPercent(185, 185), 100);
+  assert.equal(rawToPercent(161, 185), 87, '0 dB is 87 %');
+  assert.equal(rawToPercent(69, 185), 37);
+  assert.equal(percentToRaw(37, 185), 68);
+  assert.equal(percentToRaw(150, 185), 185);
+  assert.equal(percentToRaw(-5, 81), 0);
+  assert.equal(rawToPercent(81, 81), 100);
 });

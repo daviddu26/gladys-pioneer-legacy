@@ -42,20 +42,20 @@
       "required": false
     },
     {
-      "key": "max_volume_db",
+      "key": "max_volume",
       "type": "number",
       "label": {
-        "en": "Maximum volume (dB)",
-        "fr": "Volume maximum (dB)"
+        "en": "Maximum volume (%)",
+        "fr": "Volume maximum (%)"
       },
       "description": {
-        "en": "Gladys never raises the volume above this value, on every receiver and zone (-80 to +12 dB).",
-        "fr": "Gladys ne monte jamais le volume au-dessus de cette valeur, sur tous les amplis et zones (-80 à +12 dB)."
+        "en": "Gladys never raises the volume above this level, on every receiver and zone. 100 % is the receiver's maximum (+12 dB); 87 % is 0 dB.",
+        "fr": "Gladys ne monte jamais le volume au-dessus de ce niveau, sur tous les amplis et zones. 100 % est le maximum de l'ampli (+12 dB) ; 87 % correspond à 0 dB."
       },
       "required": false,
-      "default": 0,
-      "min": -80,
-      "max": 12
+      "default": 80,
+      "min": 0,
+      "max": 100
     },
     {
       "key": "input_names",

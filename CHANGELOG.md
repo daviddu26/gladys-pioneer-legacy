@@ -10,6 +10,12 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- The volume is shown and set as 0-100 % of the receiver's scale instead of
+  decibels, and the maximum volume setting is a percentage (80 % by default).
+  Created receivers need the "Update" button of the Discovery tab once.
+
 ## [1.0.5] - 2026-10-12
 
 ### Changed

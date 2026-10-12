@@ -15,7 +15,7 @@ import { createFakeGladys } from './helpers/fakeGladys.js';
 import { createFakeReceiver } from './helpers/fakeSocket.js';
 import { simulatedReceiver } from './helpers/simulatedReceiver.js';
 
-const config = normalizeConfig({ max_volume_db: -40 });
+const config = normalizeConfig({ max_volume: 44 });
 const gladys = createFakeGladys();
 
 const VSX528 = {
@@ -66,7 +66,7 @@ test('a VSX-528 gets one device with the features it supports', () => {
   assert.equal(device.name, 'Pioneer VSX-528');
   const byId = Object.fromEntries(device.features.map((f) => [f.external_id, f]));
   assert.equal(byId[fid(MAIN, VSX528, FEATURE.POWER)].type, DEVICE_FEATURE_TYPES.TELEVISION.BINARY);
-  assert.equal(byId[fid(MAIN, VSX528, FEATURE.VOLUME)].max, -40, 'the slider stops at the max');
+  assert.equal(byId[fid(MAIN, VSX528, FEATURE.VOLUME)].max, 44, 'the slider stops at the max');
   assert.equal(byId[fid(MAIN, VSX528, FEATURE.CURRENT_LISTENING_MODE)], undefined);
   const inputs = byId[fid(MAIN, VSX528, FEATURE.INPUT)].supported_options.map((o) => o.value);
   assert.ok(inputs.includes('25') && inputs.includes('05'), 'the default inputs are offered');
@@ -101,7 +101,7 @@ test('the initial state is read and published on connection', async () => {
   await connect(VSX528, 'vsx-528');
   const s = states();
   assert.equal(s[fid(MAIN, VSX528, FEATURE.POWER)], 1, 'PWR0 means on');
-  assert.equal(s[fid(MAIN, VSX528, FEATURE.VOLUME)], -46);
+  assert.equal(s[fid(MAIN, VSX528, FEATURE.VOLUME)], 37, 'VOL069 is 37 %');
   assert.equal(s[fid(MAIN, VSX528, FEATURE.MUTE)], 0);
   assert.deepEqual(s[fid(MAIN, VSX528, FEATURE.INPUT)], { text: '25' });
 });
@@ -123,7 +123,7 @@ test('commands from Gladys reach the right receiver and zone', async () => {
   assert.ok(fake.written.includes('0100SR\r'));
   await set(devices[1], FEATURE.POWER, 1);
   assert.equal(sim.state.z2power, 0);
-  await set(devices[1], FEATURE.VOLUME, -50);
+  await set(devices[1], FEATURE.VOLUME, 38);
   assert.equal(sim.state.z2vol, 31, 'zone 2 volume is stepped 1 dB at a time');
   assert.deepEqual(states()[fid(MAIN, BIG, FEATURE.CURRENT_LISTENING_MODE)], {
     text: 'EXTENDED STEREO',
@@ -139,10 +139,10 @@ test('the main volume is stepped to the target and capped at the max', async () 
       value,
       config,
     });
-  await set(FEATURE.VOLUME, -50);
+  await set(FEATURE.VOLUME, 33);
   assert.equal(sim.state.vol, 61);
-  await set(FEATURE.VOLUME, 0);
-  assert.equal(sim.state.vol, 81, 'capped at -40 dB');
+  await set(FEATURE.VOLUME, 100);
+  assert.equal(sim.state.vol, 81, 'capped at 44 %');
   await assert.rejects(set(FEATURE.VOLUME_UP, 1), /Maximum volume/);
 });
 
@@ -152,7 +152,7 @@ test('changes made with the remote are pushed to Gladys', async () => {
   fake.push('VOL081');
   await new Promise((r) => setImmediate(r));
   assert.deepEqual(gladys.published, [
-    { featureExternalId: fid(MAIN, VSX528, FEATURE.VOLUME), state: -40 },
+    { featureExternalId: fid(MAIN, VSX528, FEATURE.VOLUME), state: 44 },
   ]);
 });
 

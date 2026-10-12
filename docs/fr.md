@@ -37,8 +37,8 @@ est reconnu par son identifiant UPnP quand il en a un.
 
 - **Adresses des amplis** : seulement pour les amplis que le scan ne trouve
   pas.
-- **Volume maximum (dB)** : Gladys ne monte jamais le volume au-dessus, quel
-  que soit le curseur, le bouton ou la scène. 0 dB par défaut.
+- **Volume maximum (%)** : Gladys ne monte jamais le volume au-dessus, quel
+  que soit le curseur, le bouton ou la scène. 80 % par défaut.
 - **Noms des entrées** : la plupart des modèles ne savent pas donner les noms
   de leurs entrées. Renommez-les avec des paires `code=nom`, par exemple
   `25=Apple TV, 05=TV`. Les modèles qui donnent leurs noms les affichent
@@ -49,7 +49,7 @@ est reconnu par son identifiant UPnP quand il en a un.
 Pour chaque zone :
 
 - **Alimentation** (marche / veille)
-- **Volume** en dB, **Volume +** et **Volume −** (pas de 1 dB), **Sourdine**
+- **Volume** de 0 à 100 % (100 % = maximum de l'ampli, 87 % = 0 dB), **Volume +** et **Volume −**, **Sourdine**
 - **Entrée** : la liste des entrées
 
 Pour la zone principale, en plus :

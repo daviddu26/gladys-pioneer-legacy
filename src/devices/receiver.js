@@ -22,17 +22,15 @@ import { PioneerClient } from '../pioneer/client.js';
 import {
   COMMANDS,
   LISTENING_MODES,
-  VOLUME_DB_MAX,
-  VOLUME_DB_MIN,
+  VOLUME_RAW_MAX,
+  ZONE2_RAW_MAX,
   buildInputList,
-  dbToRaw,
   decodeInputs,
   encodeInputs,
   listeningModeName,
   normalizeInputCode,
-  rawToDb,
-  zone2DbToRaw,
-  zone2RawToDb,
+  percentToRaw,
+  rawToPercent,
 } from '../pioneer/protocol.js';
 
 const logger = createLogger({ name: 'receiver' });
@@ -70,10 +68,8 @@ const ZONES = {
     mute: [COMMANDS.muteOn, COMMANDS.muteOff, 'MUT'],
     volume: [COMMANDS.volumeUp, COMMANDS.volumeDown, 'VOL'],
     volumeQuery: COMMANDS.volumeQuery,
-    volumeMaxDb: VOLUME_DB_MAX,
+    rawMax: VOLUME_RAW_MAX,
     stepRaw: 2,
-    toDb: rawToDb,
-    toRaw: dbToRaw,
     selectInput: COMMANDS.selectInput,
     inputPrefix: 'FN',
     queries: [
@@ -88,10 +84,8 @@ const ZONES = {
     mute: [COMMANDS.zone2MuteOn, COMMANDS.zone2MuteOff, 'Z2MUT'],
     volume: [COMMANDS.zone2VolumeUp, COMMANDS.zone2VolumeDown, 'ZV'],
     volumeQuery: COMMANDS.zone2VolumeQuery,
-    volumeMaxDb: 0,
+    rawMax: ZONE2_RAW_MAX,
     stepRaw: 1,
-    toDb: zone2RawToDb,
-    toRaw: zone2DbToRaw,
     selectInput: COMMANDS.zone2SelectInput,
     inputPrefix: 'Z2F',
     queries: [
@@ -106,10 +100,8 @@ const ZONES = {
     mute: [COMMANDS.zone3MuteOn, COMMANDS.zone3MuteOff, 'Z3MUT'],
     volume: [COMMANDS.zone3VolumeUp, COMMANDS.zone3VolumeDown, 'YV'],
     volumeQuery: COMMANDS.zone3VolumeQuery,
-    volumeMaxDb: 0,
+    rawMax: ZONE2_RAW_MAX,
     stepRaw: 1,
-    toDb: zone2RawToDb,
-    toRaw: zone2DbToRaw,
     selectInput: COMMANDS.zone3SelectInput,
     inputPrefix: 'Z3F',
     queries: [
@@ -169,7 +161,6 @@ export function decodeCapabilities(text = '') {
 }
 
 function zoneFeatures(ids, zone, inputs, config, capabilities = {}) {
-  const z = ZONES[zone];
   const tv = (key, name, type, extra = {}) => ({
     name,
     external_id: ids.feature(key),
@@ -185,9 +176,9 @@ function zoneFeatures(ids, zone, inputs, config, capabilities = {}) {
   const features = [
     tv(FEATURE.POWER, 'Power', DEVICE_FEATURE_TYPES.TELEVISION.BINARY, { keep_history: true }),
     tv(FEATURE.VOLUME, 'Volume', DEVICE_FEATURE_TYPES.TELEVISION.VOLUME, {
-      unit: DEVICE_FEATURE_UNITS.DECIBEL,
-      min: VOLUME_DB_MIN,
-      max: Math.min(z.volumeMaxDb, config.max_volume_db),
+      unit: DEVICE_FEATURE_UNITS.PERCENT,
+      min: 0,
+      max: config.max_volume,
     }),
     tv(FEATURE.MUTE, 'Mute', DEVICE_FEATURE_TYPES.TELEVISION.VOLUME_MUTE),
     tv(FEATURE.VOLUME_UP, 'Volume up', DEVICE_FEATURE_TYPES.TELEVISION.VOLUME_UP, {
@@ -406,7 +397,7 @@ class ReceiverConnection {
       value = state.muted ? 1 : 0;
     } else if (key === FEATURE.VOLUME) {
       this.raw[zone] = state.raw;
-      value = ZONES[zone].toDb(state.raw);
+      value = rawToPercent(state.raw, ZONES[zone].rawMax);
     } else if (key === FEATURE.CURRENT_LISTENING_MODE) {
       if (!this.capabilities.listeningModeQuery) {
         return;
@@ -442,10 +433,10 @@ class ReceiverConnection {
     }
   }
 
-  async setVolume(zone, targetDb, config) {
+  async setVolume(zone, targetPercent, config) {
     const z = ZONES[zone];
     const [up, down, prefix] = z.volume;
-    const target = z.toRaw(Math.min(targetDb, config.max_volume_db, z.volumeMaxDb));
+    const target = percentToRaw(Math.min(targetPercent, config.max_volume), z.rawMax);
     if (this.raw[zone] === null) {
       await this.client.send(z.volumeQuery, { expectPrefix: prefix });
     }
@@ -480,7 +471,7 @@ class ReceiverConnection {
         return;
       }
       case FEATURE.VOLUME_UP: {
-        const max = z.toRaw(Math.min(config.max_volume_db, z.volumeMaxDb));
+        const max = percentToRaw(config.max_volume, z.rawMax);
         if (this.raw[zone] !== null && this.raw[zone] + z.stepRaw > max) {
           throw new Error('Maximum volume reached');
         }
