@@ -10,6 +10,11 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Changed
+
+- Declared `transports: ["local"]` (IP control on the local network): the Local
+  filter of the Gladys catalog now finds the integration.
+
 ## [1.0.7] - 2026-10-12
 
 ### Changed

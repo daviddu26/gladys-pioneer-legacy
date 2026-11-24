@@ -77,6 +77,11 @@ test('declaring catalog categories requires Gladys >= 4.86.0', () => {
   );
 });
 
+test('the manifest declares the local transport the receivers are driven by', () => {
+  // IP control on the local network (port 8102 or 23).
+  assert.deepEqual(manifest.transports, ['local']);
+});
+
 test('declaring scene actions requires Gladys >= 5.1.0', () => {
   const declared = CAPABILITY_FIELDS.filter((field) => manifest[field] !== undefined);
   assert.ok(declared.length > 0, 'the integration declares scene actions');
